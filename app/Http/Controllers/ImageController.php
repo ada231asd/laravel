@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Image;
 use App\Http\Requests\StoreImageRequest;
 use App\Http\Requests\UpdateImageRequest;
-
+use App\Http\Resources\ImageCollection;
 class ImageController extends Controller
 {
     /**
@@ -13,7 +13,8 @@ class ImageController extends Controller
      */
     public function index()
     {
-        //
+        $images = Image::all();
+        return new ImageCollection($images);
     }
 
     /**
@@ -21,7 +22,14 @@ class ImageController extends Controller
      */
     public function store(StoreImageRequest $request)
     {
-        //
+        $data = $request->validated();
+        $image = Image::create($data);
+        return response()->noContent(201)->withHeaders([
+            'Location' => route('images.show', [
+                'image' => $image->id,
+            ]),
+        ]);
+
     }
 
     /**
@@ -29,7 +37,7 @@ class ImageController extends Controller
      */
     public function show(Image $image)
     {
-        //
+        return response($image);
     }
 
     /**
@@ -37,7 +45,9 @@ class ImageController extends Controller
      */
     public function update(UpdateImageRequest $request, Image $image)
     {
-        //
+        $data = $request->validated();
+        $image->update($data);
+        return response()->noContent(204);
     }
 
     /**
@@ -45,6 +55,7 @@ class ImageController extends Controller
      */
     public function destroy(Image $image)
     {
-        //
+        $image->delete();
+        return response()->noContent(204);
     }
 }

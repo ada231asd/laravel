@@ -22,7 +22,13 @@ class StoreTagRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+             // Значение поля label...
+             'label' => [
+                'required',
+                // ...не должно встречаться в столбце label таблицы tags.
+                'unique:tags,label',
+            ],
+
         ];
     }
 }
